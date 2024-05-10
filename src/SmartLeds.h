@@ -43,7 +43,7 @@
 
 #include "RmtDriver.h"
 
-using LedType = detail::TimingParams;
+using LedType = detail2::TimingParams;
 
 // Times are in nanoseconds,
 // The RMT driver runs at 20MHz, so minimal representable time is 50 nanoseconds
@@ -64,7 +64,7 @@ enum IsrCore { CoreFirst = 0, CoreSecond = 1, CoreCurrent = 2 };
 
 class SmartLed {
 public:
-    friend class detail::RmtDriver;
+    friend class detail2::RmtDriver;
 
     // The RMT interrupt must not run on the same core as WiFi interrupts, otherwise SmartLeds
     // can't fill the RMT buffer fast enough, resulting in rendering artifacts.
@@ -76,13 +76,14 @@ public:
     // Does nothing on chips that only have one core.
     SmartLed(const LedType& type, int count, int pin, int channel = 0, BufferType doubleBuffer = DoubleBuffer,
         IsrCore isrCore = CoreCurrent)
-        : _finishedFlag(xSemaphoreCreateBinary())
-        , _driver(type, count, pin, channel, _finishedFlag)
-        , _channel(channel)
-        , _count(count)
-        , _firstBuffer(new Rgb[count])
-        , _secondBuffer(doubleBuffer ? new Rgb[count] : nullptr) {
-        assert(channel >= 0 && channel < detail::CHANNEL_COUNT);
+       
+            : _finishedFlag(xSemaphoreCreateBinary())
+            , _driver(type, count, pin, channel, _finishedFlag)
+            , _channel(channel)
+            , _count(count)
+            , _firstBuffer(new Rgb[count])
+            , _secondBuffer(doubleBuffer ? new Rgb[count] : nullptr) {
+        assert(channel >= 0 && channel < detail2::CHANNEL_COUNT);
         assert(ledForChannel(channel) == nullptr);
 
         xSemaphoreGive(_finishedFlag);
@@ -160,7 +161,7 @@ private:
     static SmartLed*& IRAM_ATTR ledForChannel(int channel);
 
     static bool anyAlive() {
-        for (int i = 0; i != detail::CHANNEL_COUNT; i++)
+        for (int i = 0; i != detail2::CHANNEL_COUNT; i++)
             if (ledForChannel(i) != nullptr)
                 return true;
         return false;
@@ -185,7 +186,7 @@ private:
     }
 
     SemaphoreHandle_t _finishedFlag;
-    detail::RmtDriver _driver;
+    detail2::RmtDriver _driver;
     int _channel;
     int _count;
     std::unique_ptr<Rgb[]> _firstBuffer;

@@ -8,7 +8,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 
-namespace detail {
+namespace detail2 {
 
 constexpr const int CHANNEL_COUNT = RMT_CHANNEL_MAX;
 

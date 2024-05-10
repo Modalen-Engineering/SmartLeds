@@ -3,6 +3,7 @@
 #include <esp_system.h>
 #include <stdint.h>
 
+
 #if defined(ESP_IDF_VERSION)
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
 #define SMARTLEDS_NEW_RMT_DRIVER 1
@@ -13,7 +14,10 @@
 #define SMARTLEDS_NEW_RMT_DRIVER 0
 #endif
 
-namespace detail {
+namespace detail2 {
+struct LedType {
+    int t0h, t0l, t1h, t1l, reset;
+};
 
 struct TimingParams {
     uint32_t T0H;
@@ -23,7 +27,9 @@ struct TimingParams {
     uint32_t TRS;
 };
 
-using LedType = TimingParams;
+namespace detail2 {
+    using LedType = TimingParams;
+}
 
 } // namespace detail
 
@@ -32,3 +38,5 @@ using LedType = TimingParams;
 #else
 #include "RmtDriver4.h"
 #endif
+
+ 
